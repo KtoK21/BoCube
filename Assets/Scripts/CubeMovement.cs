@@ -37,6 +37,9 @@ public class CubeMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.K))
             dir = Vector3.right;
 
+        if (Input.GetKey(KeyCode.Space))
+            transform.position = new Vector3(transform.position.x, 1, transform.position.z);
+
         if (dir != Vector3.zero && !isRotate)
         {
             StartCoroutine(Rotate(dir));

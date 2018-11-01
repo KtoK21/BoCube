@@ -4,14 +4,19 @@ using UnityEngine;
 
 public class perTileControl : MonoBehaviour {
 
-    allTileControl allTileControl;
-    allTileControl.Tile thisTile;
+    MapControl MapControl;
+    MapControl.Tile thisTile;
+    public Material AfterTileMaterial;
+    public bool isTouched;
     // Use this for initialization
-    void Start () {
-
-        allTileControl = GameObject.Find("GameManager").GetComponent<allTileControl>();
-        allTileControl.AddTile(gameObject);
-        thisTile = allTileControl.Tiles.Find(obj => obj.TileObject == gameObject);
+    void Start() {
+        MapControl = GameObject.Find("GameManager").GetComponent<MapControl>();
+        thisTile = MapControl.AddTile(gameObject);
+        if (transform.parent.name == "Ceiling")
+        {
+            thisTile.isTouched = true;
+            isTouched = true;
+        }
     }
 
     // Update is called once per frame
@@ -20,14 +25,16 @@ public class perTileControl : MonoBehaviour {
         if (other.transform.name != "PlayerCube")
         {
             thisTile.isTouched = true;
-            thisTile.TileObject.GetComponent<MeshRenderer>().material.color = Color.red;
-            transform.GetComponent<MeshRenderer>().material.color = Color.red;
-            other.GetComponent<MeshRenderer>().material.color = Color.red;
+            isTouched = true;
+            thisTile.TileObject.GetComponent<MeshRenderer>().material = AfterTileMaterial;
+            other.GetComponent<MeshRenderer>().material = AfterTileMaterial;
+
         }
         else
         {
             thisTile.isTouched = true;
-            thisTile.TileObject.GetComponent<MeshRenderer>().material.color = Color.red;
+            isTouched = true;
+            thisTile.TileObject.GetComponent<MeshRenderer>().material = AfterTileMaterial;
         }
     }
 }

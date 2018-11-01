@@ -123,3 +123,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34eef23c1aa5b644daded034f7d80477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AfterTileMaterial: {fileID: 2100000, guid: 69e9abd6b2eede84f80ceb7f54e309de, type: 2}
