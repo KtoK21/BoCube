@@ -16,8 +16,8 @@ public class CanvasControl : MonoBehaviour
         if (!StaticVariable.IsGamePaused && !StaticVariable.IsGameFinished)
             TimeCalc();
 
-        if (StaticVariable.IsGameFinished)
-            FinishText.gameObject.SetActive(true);
+       // if (StaticVariable.IsGameFinished)
+         //   FinishText.gameObject.SetActive(true);
 
     }
     void ActivePanel()
