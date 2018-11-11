@@ -7,7 +7,7 @@ public class TerrainCubeControl : MonoBehaviour {
     MapControl MapControl;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
         MapControl = GameObject.Find("GameManager").GetComponent<MapControl>();
         foreach(Transform child in transform)
         {

@@ -23,24 +23,27 @@ public class perTileControl : MonoBehaviour {
     // Update is called once per frame
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform.name == "PlayerCube")
+        if (!MapControl.isInitiating)
         {
-            thisTile.isTouched = true;
-            isTouched = true;
-            thisTile.TileObject.GetComponent<MeshRenderer>().material = AfterTileMaterial;
-        }
+            if (other.transform.name == "PlayerCube(Clone)")
+            {
+                thisTile.isTouched = true;
+                isTouched = true;
+                thisTile.TileObject.GetComponent<MeshRenderer>().material = AfterTileMaterial;
+            }
 
-        else
-        {
-            string targetName = other.transform.parent.name;
+            else
+            {
+                string targetName = other.transform.parent.name;
 
-            thisTile.isTouched = true;
-            isTouched = true;
+                thisTile.isTouched = true;
+                isTouched = true;
 
-            if (targetName == "Ceiling" || targetName == "LeftBorder" || targetName == "RightBorder")
-                return;
+                if (targetName == "Ceiling" || targetName == "LeftBorder" || targetName == "RightBorder")
+                    return;
 
-            thisTile.TileObject.GetComponent<MeshRenderer>().material = AfterTileMaterial;
+                thisTile.TileObject.GetComponent<MeshRenderer>().material = AfterTileMaterial;
+            }
         }
     }
 

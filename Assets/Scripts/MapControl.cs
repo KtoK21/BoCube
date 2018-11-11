@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MapControl : MonoBehaviour {
 
     public Material prevMaterial;
     public GameObject TerrainCube;
+    public GameObject PlayerCube;
+
     public class Tile
     {
         public GameObject TileObject { get; set; }
@@ -13,15 +16,17 @@ public class MapControl : MonoBehaviour {
     }
     public static List<Tile> Tiles = new List<Tile>();
     public static List<GameObject> TerrainCubes = new List<GameObject>();
+    public static bool isInitiating = true;
 
     List<Vector3> Coordinates = new List<Vector3>();
-    GameObject Terrains;
+
+
     // Use this for initialization
 	void Awake () {
 
-        Terrains = GameObject.Find("Terrains");
-        InitiateTerrainCoordinate();
         GenerateTerrain();
+        InitiatePlayerCube();
+        isInitiating = false;
 
     }
 	
@@ -53,40 +58,72 @@ public class MapControl : MonoBehaviour {
     }
     //for each position among 125 kinds(5x5x5 in map), start from base(base map like floor, leftwall, rightwall), 50% chance to instantiate terrain cube. If yes, 50% chance to extend. Do this for 75 tile(every tile in floor, lestwall, rightwall). If target position already has terrain cube, pass.
 
-    public void InitiateTerrainCoordinate()
+
+
+
+    public void GenerateTerrain()
     {
+        int Seed = Random.Range(0, 125);
+        Debug.Log(Seed);
+        Coordinates.Add(TerrainCubes[Seed].transform.position);
+        Destroy(TerrainCubes[Seed]);
 
-        Vector3 target = new Vector3(4, 1, -4);
-        for(int i=0; i<5; i++)
-        {
-            Coordinates.Add(target);
-            target += new Vector3(-2, 0, 0);
-        }
-        for(int i=0; i<5; i++)
-        {
-            for(int j=1; j<5; j++)
-            {
-                Coordinates.Add(Coordinates[i] + new Vector3(0, 0, 2 * j));
-            }
-        }
-        for(int i=0; i<25; i++)
-        {
-            for(int j=1; j<5; j++)
-            {
-                Coordinates.Add(Coordinates[i] + new Vector3(0, 2 * j, 0));
+        int Count = 0;
 
+        do
+        {
+            Vector3 target = Coordinates[Count];
+            for (int i = 0; i < Random.Range(3, 5); i++)
+            {
+                int choice = Random.Range(0, 3);
+                Vector3 direction = new Vector3();
+                if (choice == 0) //grow toward floor
+                    direction = new Vector3(0, -2, 0);
+
+                else if (choice == 1) //grow toward leftWall
+                    direction = new Vector3(-2, 0, 0);
+
+                else if (choice == 2) //grow toward leftWall
+                    direction = new Vector3(0, 0, 2);
+
+                ExtendtoWall(target, direction);
             }
-        }
-        
+
+            Count++;
+            Debug.Log("loop called");
+        } while (Coordinates.Count > Count);
     }
 
+    void ExtendtoWall(Vector3 target, Vector3 direction)
+    {
+        int Length = Random.Range(3, 5);
+        for(int i = 0; i< Length; i++)
+        {
+            target += direction;
+            if(TerrainCubes.Exists(obj => obj.transform.position == target))
+            {
+
+                Coordinates.Add(target);
+                Destroy(TerrainCubes.Find(obj => obj.transform.position == target));
+            }
+
+            
+        }
+    }
+
+    void InitiatePlayerCube()
+    {
+        int target = Random.Range(0, Coordinates.Count);
+        Instantiate(PlayerCube, Coordinates[target], Quaternion.identity);
+    }
+    /*
     public void GenerateTerrain()
     {
         GameObject Terrains = GameObject.Find("Terrains");
 
         foreach (Vector3 target in Coordinates)
         {
-            if (Random.Range(0,10) == 1 && !TerrainCubes.Exists(obj => obj.transform.position == target))
+            if (Random.Range(0,30) == 1 && !TerrainCubes.Exists(obj => obj.transform.position == target))
             {
                 GameObject Tcube = Instantiate(TerrainCube, target, Quaternion.identity);
                 Tcube.transform.SetParent(Terrains.transform);
@@ -107,7 +144,7 @@ public class MapControl : MonoBehaviour {
             }
         }
     }
-
+    
     void ExtendtoWall(GameObject Tcube, Vector3 direction)
     {
         Vector3 target = Tcube.transform.position + direction;
@@ -121,7 +158,22 @@ public class MapControl : MonoBehaviour {
             target += direction;
         }
     }
-
+    
+    void InitiatePlayerCube()
+    {
+        foreach (Vector3 target in Coordinates)
+        {
+            if (Random.Range(0, 5) == 1 && !TerrainCubes.Exists(obj => obj.transform.position == target))
+            {
+                GameObject playercube = Instantiate(PlayerCube, target, Quaternion.identity);
+                return;
+            }
+        }
+    }
+    */
+    /// <summary>
+    /// Debug functions for testing below
+    /// </summary>
 
     public void DebugAlltileCheck()
     {
@@ -133,6 +185,7 @@ public class MapControl : MonoBehaviour {
 
     public void DebugRegenerateTerrain()
     {
+        /*
         foreach (Transform child in Terrains.transform)
         {
             Destroy(child.gameObject);
@@ -147,7 +200,9 @@ public class MapControl : MonoBehaviour {
         TerrainCubes.Clear();
 
         GenerateTerrain();
-    }
+        */
+        SceneManager.LoadScene("Main");
+        }
 
     public void DebugChangeTileColor()
     {
