@@ -63,51 +63,71 @@ public class MapControl : MonoBehaviour {
 
     public void GenerateTerrain()
     {
-        int Seed = Random.Range(0, 125);
-        Debug.Log(Seed);
+        int Seed = 62;
+        //int Seed = 101;
+        //Debug.Log(Seed);
         Coordinates.Add(TerrainCubes[Seed].transform.position);
-        Destroy(TerrainCubes[Seed]);
+        DestroyandRemoveCube(TerrainCubes[Seed]);
 
         int Count = 0;
 
+
         do
         {
+            Debug.Log(Count);
             Vector3 target = Coordinates[Count];
-            for (int i = 0; i < Random.Range(3, 5); i++)
+            for (int i = 0; i < 3; i++)
             {
-                int choice = Random.Range(0, 3);
+                
                 Vector3 direction = new Vector3();
-                if (choice == 0) //grow toward floor
+
+                if (Coordinates.Count % 3 == 0) //grow toward floor
                     direction = new Vector3(0, -2, 0);
 
-                else if (choice == 1) //grow toward leftWall
+                else if (Coordinates.Count % 3 == 1) //grow toward leftWall
                     direction = new Vector3(-2, 0, 0);
 
-                else if (choice == 2) //grow toward leftWall
+                else if (Coordinates.Count % 3 == 2) //grow toward rightWall
                     direction = new Vector3(0, 0, 2);
 
-                ExtendtoWall(target, direction);
+                //   Debug.Log("it is " + Coordinates.Count + "and " + direction);
+                //ExtendtoWall(target, direction);
+
+                int Length = Random.Range(3, 5);
+                for (int j = 0; j < Length; j++)
+                {
+                    target += direction;
+                    if (TerrainCubes.Exists(obj => obj.transform.position == target))
+                    {
+                        //   Debug.Log(Coordinates.Count);
+                        Coordinates.Add(target);
+
+                        DestroyandRemoveCube(TerrainCubes.Find(obj => obj.transform.position == target));
+                    }
+                }
+
             }
 
-            Count++;
-            Debug.Log("loop called");
+        Count++;
+
         } while (Coordinates.Count > Count);
+
+        Debug.Log(Count);
     }
 
     void ExtendtoWall(Vector3 target, Vector3 direction)
     {
-        int Length = Random.Range(3, 5);
+        int Length = Random.Range(2, 5);
         for(int i = 0; i< Length; i++)
         {
             target += direction;
-            if(TerrainCubes.Exists(obj => obj.transform.position == target))
+            if (TerrainCubes.Exists(obj => obj.transform.position == target))
             {
-
+             //   Debug.Log(Coordinates.Count);
                 Coordinates.Add(target);
-                Destroy(TerrainCubes.Find(obj => obj.transform.position == target));
-            }
 
-            
+                DestroyandRemoveCube(TerrainCubes.Find(obj => obj.transform.position == target));
+            }
         }
     }
 
@@ -116,6 +136,14 @@ public class MapControl : MonoBehaviour {
         int target = Random.Range(0, Coordinates.Count);
         Instantiate(PlayerCube, Coordinates[target], Quaternion.identity);
     }
+
+    void DestroyandRemoveCube(GameObject target)
+    {
+        TerrainCubes.Remove(target);
+        Destroy(target);
+
+    }
+    
     /*
     public void GenerateTerrain()
     {
